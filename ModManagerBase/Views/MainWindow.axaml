@@ -1,0 +1,148 @@
+﻿<Window x:Class="ModManagerBase.Views.MainWindow"
+        xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ModManagerBase"
+        mc:Ignorable="d"
+        Title="Mod Manager Base" Height="450" Width="800" Icon="/Assets/avalonia-logo.ico"
+        Background="DarkSlateBlue"
+        CanResize="False">
+    <Grid Margin="10" ColumnDefinitions="3*,2*" RowDefinitions="1*,3*,0.5*">
+        <Grid RowDefinitions="2*">
+            <Grid VerticalAlignment="Bottom" ColumnDefinitions="*,*,*">
+                <Grid Grid.Column="0">
+                    <Button Name="ModsButton" Margin="5" Click="Mods_Click" Cursor="Hand">
+						<Image Name="ModsImage" Source="/Assets/ModsSel.png"/>
+                    </Button>
+                </Grid>
+                <Grid Grid.Column="1">
+                    <Button Name="MusicButton" Margin="5" Click="Other_Click" Cursor="Hand">
+						<Image Name="MusicImage" Source="/Assets/OtherUnsel.png"/>
+                    </Button>
+                </Grid>
+                <Grid Grid.Column="2">
+                    <Button Name="SettingsButton" Margin="5" Click="Settings_Click" Cursor="Hand">
+						<Image Name="SettingsImage" Source="/Assets/SettingsUnsel.png"/>
+                    </Button>
+                </Grid>
+            </Grid>
+        </Grid>
+        <Grid ColumnDefinitions="*,*" RowDefinitions="4.5*,0.5*,4.5*,1.5*" Grid.RowSpan="2" Grid.Column="1" Name="ModContent" IsVisible="True" Margin="10,10,10,0">
+            <Image Name="Preview" Source="/Assets/Preview0.png" Stretch="Uniform" VerticalAlignment="Top" HorizontalAlignment="Center"  Grid.ColumnSpan="2" RenderOptions.BitmapInterpolationMode="HighQuality"/>
+            <Grid Grid.ColumnSpan="2" Grid.RowSpan="2" Grid.Row="2">
+                <TextBox Name="DescBox" Classes="NoHover" FontSize="12" Background="#F04080" BorderBrush="White" Foreground="White" TextWrapping="WrapWithOverflow" IsReadOnly="True" Text="Create a mod manager yourself with this base. You're seeing this because this mod has no description, or no mod is selected.&#xA;&#xA;Confused about the buttons at the bottom? Hover over them for more info."/>
+            </Grid>
+        </Grid>
+        <Grid RowDefinitions="4*" Grid.Row="1" Name="Mods" IsVisible="True">
+            <DataGrid Name="ModDataGrid"  Grid.Column="0" Grid.Row="0" Margin="10"
+                      RowBackground="White" AutoGenerateColumns="False" SelectionChanged="currentrow" Background="LightBlue" SelectionMode="Single" BorderBrush="#F04080" Foreground="White" ItemsSource="{Binding mods}">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="On" Width="auto">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox Name="RowCheckBox" IsChecked="{Binding IsChecked}" Cursor="Hand" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" IsReadOnly="True" Width="4*"/>
+                    <DataGridTextColumn Header="Author" Binding="{Binding Authors}" IsReadOnly="True" Width="2*"/>
+                    <DataGridTemplateColumn Header="Link" Width="32">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Name="LinkButton" CommandParameter="{Binding Link}" Click="OpenLink_Click" Cursor="Hand">
+                                    <Image Name="LinkImage" Source="{Binding LinkImage}" RenderTransform="56,56"/>
+                                </Button>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+                <DataGrid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Open Folder"
+                      Click="Folder_OnClick"
+                      CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent}"/>
+                        <MenuItem Header="Edit Metadata"
+                      Click="Edit_OnClick"
+                      CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent}"/>
+                        <MenuItem Header="Delete"
+                      Click="Delete_OnClick"
+                      CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent}"/>
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
+            </DataGrid>
+        </Grid>
+        <Grid ColumnDefinitions="*,*,*,*,3*,*,*,*,*" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,5,0,0">
+            <Button Name="DeployButton" Click="Deploy_Click" Grid.Column="0" Cursor="Hand" ToolTip.Tip="Deploy mods to selected folder." HorizontalContentAlignment="Center" HorizontalAlignment="Center">
+                <Button.Template>
+                    <ControlTemplate>
+                        <Image Name="DeployImage" Source="/Assets/Deploy.png" RenderOptions.BitmapInterpolationMode="HighQuality"/>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+            <Button Name="NewButton" Click="New_OnClick" Grid.Column="1" Cursor="Hand" ToolTip.Tip="Create or add a new mod." HorizontalContentAlignment="Center" HorizontalAlignment="Center">
+                <Button.Template>
+                    <ControlTemplate>
+                        <Image Name="NewImage" Source="/Assets/plus.png" RenderOptions.BitmapInterpolationMode="HighQuality"/>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+            <Button Name="RefreshButton" Click="Refresh_Click" Grid.Column="2" Cursor="Hand" ToolTip.Tip="Refresh mods and settings." HorizontalContentAlignment="Center" HorizontalAlignment="Center">
+                <Button.Template>
+                    <ControlTemplate>
+                        <Image Name="RefreshImage" Source="/Assets/Refresh.png" RenderOptions.BitmapInterpolationMode="HighQuality"/>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+            <Button Name="OpenFolderButton" Click="OpenFolder_Click" Grid.Column="3" Cursor="Hand" ToolTip.Tip="Open the mods folder." HorizontalContentAlignment="Center" HorizontalAlignment="Center">
+                <Button.Template>
+                    <ControlTemplate>
+                        <Image Name="OpenFolderImage" Source="/Assets/OpenFolder.png" RenderOptions.BitmapInterpolationMode="HighQuality"/>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+            <Button Name="DownloadButton" Click="Download_Click" Grid.Column="7" Cursor="Hand" Grid.ColumnSpan="2" HorizontalContentAlignment="Center" HorizontalAlignment="Center">
+                <Button.Template>
+                    <ControlTemplate>
+                        <Image Name="DownloadImage" Source="/Assets/DownloadUnsel.png" RenderOptions.BitmapInterpolationMode="HighQuality"/>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+            <TextBlock Foreground="#e8feff" Grid.ColumnSpan="2" Grid.Column="5" HorizontalAlignment="Center" Text="Find More" VerticalAlignment="Center" FontSize="25" FontWeight="SemiBold"/>
+        </Grid>
+        <Grid Name="SettingsWindow" ColumnDefinitions="*,*" Grid.Row="1" Grid.ColumnSpan="2" IsVisible="False">
+            <Grid Background="#005ada" ColumnDefinitions="*,2*" RowDefinitions="*,*,*,*,*,*,*,*">
+                <TextBlock Text="Settings" Foreground="White" FontSize="25" FontWeight="SemiBold" TextDecorations="Underline"/>
+                <TextBlock Text="Output Path" Foreground="White" FontSize="18" Grid.Row="1" ToolTip.Tip="After clicking Deploy, the mods will be placed in this path." VerticalAlignment="Center"/>
+                <TextBlock Text="Default Preview" Foreground="White" FontSize="18" Grid.Row="2" ToolTip.Tip="The preview that will show up if none is found." VerticalAlignment="Center"/>
+                <Grid Grid.Row="1" Grid.Column="1" Margin="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="3*"/>
+                    </Grid.ColumnDefinitions>
+                    <Button Name="PathButton" ToolTip.Tip="After clicking Deploy, the mods will be placed in this path." Click="Path_Click">Browse</Button>
+                    <TextBox Name="PathBox" Classes="NoHover" ToolTip.Tip="After clicking Deploy, the mods will be placed in this path." IsEnabled="False" Grid.Column="1" Foreground="#b8dffd" Background="#003e94" TextChanged="PathBox_TextChanged"/>
+                </Grid>
+                <ComboBox Name="DefPrevBox" Grid.Row="2" Grid.Column="1" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Center" SelectionChanged="DefPrevBox_SelectionChanged">
+                    <ComboBoxItem IsSelected="True" Content="Preview 1"/>
+                    <ComboBoxItem Content="Preview 2"/>
+                    <ComboBoxItem Content="Preview 3"/>
+                    <ComboBoxItem Content="Preview 4"/>
+                </ComboBox>
+            </Grid>
+            <Grid Grid.Column="1" Background="#005ada">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition Height="7*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="About:" Foreground="White" FontSize="25" FontWeight="SemiBold" TextDecorations="Underline"/>
+                <TextBox IsReadOnly="True" Classes="NoHover" Grid.Row="1" Focusable="False" Foreground="#b8dffd" Background="#005ada" BorderThickness="0" FontSize="12" ScrollViewer.VerticalScrollBarVisibility="Auto" TextWrapping="WrapWithOverflow" Text="Mod Manager Base is a mod manager base made by Solt11.&#xA;Current Version: Ready To Use"/>
+            </Grid>
+        </Grid>
+        <Grid Name="MusicWindow" Grid.Row="1" Grid.ColumnSpan="2" IsVisible="True">
+            <Grid Background="#005ada" ColumnDefinitions="*,2*" RowDefinitions="*,*,*,*,*,*,*,*">
+                
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

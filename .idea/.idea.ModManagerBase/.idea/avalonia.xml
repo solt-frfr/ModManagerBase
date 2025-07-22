@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AvaloniaProject">
+    <option name="projectPerEditor">
+      <map>
+        <entry key="ForkInTheOutlet/App.axaml" value="ForkInTheOutlet/ForkInTheOutlet.csproj" />
+        <entry key="ForkInTheOutlet/Views/MainWindow.axaml" value="ForkInTheOutlet/ForkInTheOutlet.csproj" />
+        <entry key="ForkInTheOutlet/Views/MakePack.axaml" value="ForkInTheOutlet/ForkInTheOutlet.csproj" />
+        <entry key="ModManagerBase/App.axaml" value="ModManagerBase/ModManagerBase.csproj" />
+        <entry key="ModManagerBase/Views/MainWindow.axaml" value="ModManagerBase/ModManagerBase.csproj" />
+        <entry key="ModManagerBase/Views/MakePack.axaml" value="ModManagerBase/ModManagerBase.csproj" />
+      </map>
+    </option>
+  </component>
+</project>

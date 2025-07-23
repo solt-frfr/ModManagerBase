@@ -171,7 +171,7 @@ namespace ModManagerBase.Views
                     };
                     string jsonString = System.IO.File.ReadAllText(filepath);
                     mod = JsonSerializer.Deserialize<Meta>(jsonString, jsonoptions);
-                    if ((Path.Combine(Misc.Paths.mods, mod.ID) == modpath) && !mods.Contains(mod))
+                    if (!mods.Contains(mod))
                     {
                         if (enabledmods.Contains(mod.ID))
                             mod.IsChecked = true;
@@ -191,17 +191,40 @@ namespace ModManagerBase.Views
 
         private void Folder_OnClick(object sender, RoutedEventArgs e)
         {
+            string modpath = "";
             foreach (var item in ModDataGrid.SelectedItems)
             {
                 Meta row = (Meta)item;
                 if (row != null)
                 {
-                    if (Directory.Exists(Path.Combine(Misc.Paths.mods, row.ID)))
+                    foreach (string path in CountFolders(Misc.Paths.mods))
+                    {
+                        Meta mod = new Meta();
+                        string filepath = Path.Combine(path, "meta.json");
+                        if (!System.IO.File.Exists(filepath))
+                        {
+                            continue;
+                        }
+                        if (System.IO.File.Exists(filepath))
+                        {
+                            var jsonoptions = new JsonSerializerOptions
+                            {
+                                WriteIndented = true
+                            };
+                            string jsonString = System.IO.File.ReadAllText(filepath);
+                            mod = JsonSerializer.Deserialize<Meta>(jsonString, jsonoptions);
+                            if (mod.ID == row.ID)
+                            {
+                                modpath = path;
+                            }
+                        }
+                    }
+                    if (Directory.Exists(modpath))
                     {
                         try
                         {
                             ProcessStartInfo StartInformation = new ProcessStartInfo();
-                            StartInformation.FileName = Path.Combine(Misc.Paths.mods, row.ID);
+                            StartInformation.FileName = modpath;
                             StartInformation.UseShellExecute = true;
                             Process process = Process.Start(StartInformation);
                         }
@@ -213,12 +236,34 @@ namespace ModManagerBase.Views
 
         private async void Delete_OnClick(object sender, RoutedEventArgs e)
         {
-
+            string modpath = "";
             foreach (var item in ModDataGrid.SelectedItems)
             {
                 Meta row = (Meta)item;
                 if (row != null)
                 {
+                    foreach (string path in CountFolders(Misc.Paths.mods))
+                    {
+                        Meta mod = new Meta();
+                        string filepath = Path.Combine(path, "meta.json");
+                        if (!System.IO.File.Exists(filepath))
+                        {
+                            continue;
+                        }
+                        if (System.IO.File.Exists(filepath))
+                        {
+                            var jsonoptions = new JsonSerializerOptions
+                            {
+                                WriteIndented = true
+                            };
+                            string jsonString = System.IO.File.ReadAllText(filepath);
+                            mod = JsonSerializer.Deserialize<Meta>(jsonString, jsonoptions);
+                            if (mod.ID == row.ID)
+                            {
+                                modpath = path;
+                            }
+                        }
+                    }
                     var box = MessageBoxManager.GetMessageBoxStandard(
                         $"Delete {row.Name}",
                         $"Are you sure you want to delete {row.Name}?",
@@ -230,7 +275,7 @@ namespace ModManagerBase.Views
 
                     if (result == ButtonResult.Yes)
                     {
-                        Directory.Delete(Path.Combine(Misc.Paths.mods, row.ID), true);
+                        Directory.Delete(modpath, true);
                     }
                 }
             }
@@ -240,22 +285,45 @@ namespace ModManagerBase.Views
         private void currentrow(object sender, SelectionChangedEventArgs e)
         {
             Meta row = (Meta)ModDataGrid.SelectedItem;
+            string modpath = "";
             try
             {
                 if (string.IsNullOrWhiteSpace(row.Description))
-                    DescBox.Text = "Quasar never worked for me, so I made my own. You're seeing this because this mod has no description, or no mod is selected.\n\nDon't see a mod? The ID and folder names must match.\n\nConfused about the buttons at the bottom? Hover over them for more info.";
+                    DescBox.Text = "Create a mod manager yourself with this base. You're seeing this because this mod has no description, or no mod is selected.\n\nConfused about the buttons at the bottom? Hover over them for more info.";
                 else
                     DescBox.Text = row.Description;
             }
             catch
             {
-                DescBox.Text = "Quasar never worked for me, so I made my own. You're seeing this because this mod has no description, or no mod is selected.\n\nDon't see a mod? The ID and folder names must match.\n\nConfused about the buttons at the bottom? Hover over them for more info.";
+                DescBox.Text = "Create a mod manager yourself with this base. You're seeing this because this mod has no description, or no mod is selected.\n\nConfused about the buttons at the bottom? Hover over them for more info.";
             }
             try
             {
-                if (System.IO.File.Exists(Path.Combine(Misc.Paths.mods, row.ID, "preview.webp")))
+                foreach (string path in CountFolders(Misc.Paths.mods))
                 {
-                    string imagePath = Path.Combine(Misc.Paths.mods, row.ID, "preview.webp");
+                    Meta mod = new Meta();
+                    string filepath = Path.Combine(path, "meta.json");
+                    if (!System.IO.File.Exists(filepath))
+                    {
+                        continue;
+                    }
+                    if (System.IO.File.Exists(filepath))
+                    {
+                        var jsonoptions = new JsonSerializerOptions
+                        {
+                            WriteIndented = true
+                        };
+                        string jsonString = System.IO.File.ReadAllText(filepath);
+                        mod = JsonSerializer.Deserialize<Meta>(jsonString, jsonoptions);
+                        if (mod.ID == row.ID)
+                        {
+                            modpath = path;
+                        }
+                    }
+                }
+                if (System.IO.File.Exists(Path.Combine(modpath, "preview.webp")))
+                {
+                    string imagePath = Path.Combine(modpath, "preview.webp");
 
                     if (File.Exists(imagePath))
                     {

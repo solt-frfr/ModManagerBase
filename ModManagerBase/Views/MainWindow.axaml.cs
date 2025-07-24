@@ -33,7 +33,7 @@ namespace ModManagerBase.Views
         /// This is largely copied from Pulsar. It's software also developed by me.
         private List<string> enabledmods = new List<string>();
         private bool isInitialized = false;
-        private ObservableCollection<Meta> mods = new ObservableCollection<Meta>();
+        private ModManagerBase.ViewModels.MainWindowViewModel viewModel = new ModManagerBase.ViewModels.MainWindowViewModel();
 
         public MainWindow()
         {
@@ -65,6 +65,7 @@ namespace ModManagerBase.Views
             }
             Refresh();
             isInitialized = true;
+            DataContext = viewModel;
         }
 
         private string[] CountFolders(string folderPath)
@@ -120,7 +121,7 @@ namespace ModManagerBase.Views
                 enabledmods = QuickJson(false, enabledmods, "enabledmods.json");
             }
             catch { }
-            mods.Clear();
+            viewModel.AllMods.Clear();
             string[] griditems = CountFolders(Misc.Paths.mods);
             Settings settings = new Settings();
             List<string> blacklist = new List<string>();
@@ -171,17 +172,18 @@ namespace ModManagerBase.Views
                     };
                     string jsonString = System.IO.File.ReadAllText(filepath);
                     mod = JsonSerializer.Deserialize<Meta>(jsonString, jsonoptions);
-                    if (!mods.Contains(mod))
+                    if (!viewModel.AllMods.Contains(mod))
                     {
                         if (enabledmods.Contains(mod.ID))
                             mod.IsChecked = true;
                         else
                             mod.IsChecked = false;
                         mod.LinkImage = CreateLinkImage(mod.Link);
-                        mods.Add(mod);
+                        viewModel.AllMods.Add(mod);
                     }
                 }
             }
+            DataContext = viewModel;
         }
         private void New_OnClick(object sender, RoutedEventArgs e)
         {
@@ -276,6 +278,7 @@ namespace ModManagerBase.Views
                     if (result == ButtonResult.Yes)
                     {
                         Directory.Delete(modpath, true);
+                        break;
                     }
                 }
             }

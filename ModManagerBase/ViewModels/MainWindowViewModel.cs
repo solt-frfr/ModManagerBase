@@ -1,6 +1,22 @@
-﻿namespace ModManagerBase.ViewModels;
+﻿using System.Collections.ObjectModel;
+
+namespace ModManagerBase.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
-    public string Greeting { get; } = "Welcome to Avalonia!";
+    private ObservableCollection<Meta> _allmods;
+
+    public ObservableCollection<Meta> AllMods
+    {
+        get { return _allmods; }
+        set { SetProperty(ref _allmods, value); }
+    }
+
+    public MainWindowViewModel()
+    {
+        AllMods = new ObservableCollection<Meta> 
+        {
+            new Meta { Name = "Please Press Refresh." },
+        };
+    }
 }

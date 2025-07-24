@@ -36,7 +36,7 @@
         </Grid>
         <Grid RowDefinitions="4*" Grid.Row="1" Name="Mods" IsVisible="True">
             <DataGrid Name="ModDataGrid"  Grid.Column="0" Grid.Row="0" Margin="10"
-                      RowBackground="White" AutoGenerateColumns="False" SelectionChanged="currentrow" Background="LightBlue" SelectionMode="Single" BorderBrush="#F04080" Foreground="White" ItemsSource="{Binding mods}">
+                      RowBackground="#557E8A" AutoGenerateColumns="False" SelectionChanged="currentrow" Background="LightBlue" SelectionMode="Single" BorderBrush="#F04080" Foreground="White" ItemsSource="{Binding AllMods}">
                 <DataGrid.Columns>
                     <DataGridTemplateColumn Header="On" Width="auto">
                         <DataGridTemplateColumn.CellTemplate>
@@ -51,7 +51,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Button Name="LinkButton" CommandParameter="{Binding Link}" Click="OpenLink_Click" Cursor="Hand">
-                                    <Image Name="LinkImage" Source="{Binding LinkImage}" RenderTransform="56,56"/>
+                                    <Image Name="LinkImage" Source="{Binding LinkImage}" Width="56" Height=""/>
                                 </Button>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
